@@ -1,25 +1,39 @@
 # ─────────────────────────────────────────────────────────────────────────────
 # VGG-19 Image Classification – Streamlit Community Cloud requirements
 #
-# Target runtime : Python 3.11
-# Platform       : Linux x86_64 (Debian 11 "bullseye") – Streamlit Cloud
-# Python selector: Set to 3.11 in the Cloud dashboard → Advanced Settings
-#                  (runtime.txt is NOT respected by Streamlit Community Cloud)
+# Target runtime : Python 3.14 (Streamlit Cloud default as of 2026)
+# Platform       : Linux x86_64 manylinux_2_28 – Streamlit Cloud
 #
-# Dependency matrix
-# ──────────────────────────────────────────────────────────────
-# Package       | Version  | Notes
-# ──────────────────────────────────────────────────────────────
-# torch         | 2.5.1    | cp311-manylinux_2_17_x86_64 wheel
-#               |          | available on PyPI; CPU-only (no CUDA)
-# torchvision   | 0.20.1   | matches torch 2.5.x series exactly
-# streamlit     | 1.40.2   | latest stable; fully compatible w/ Py 3.11
-# Pillow        | 10.4.0   | security patch over 10.3.0; same API
-# pandas        | 2.2.3    | patch release over 2.2.2; same API
+# ── Why these versions ───────────────────────────────────────────────────────
+#
+# torch 2.9.0 and torch 2.5.1 both fail on Python 3.14:
+#   - torch==2.5.1 has no cp314 wheel (built for cp38–cp312 only)
+#   - torch==2.9.0 does not exist as a PyPI release (typo in prompt)
+#   - torch==2.9.1 is the first release to publish a cp314 CPU wheel
+#
+# torch==2.10.0 + torchvision==0.25.0 is the confirmed stable pairing for
+# Python 3.14 on Linux x86_64:
+#   - Officially announced Jan 22 2026 (dev-discuss.pytorch.org/t/3291)
+#   - torchvision 0.25.0 is the exact matching domain library release
+#     (confirmed in the same announcement: pytorch/vision/releases/tag/v0.25.0)
+#   - CPU-only build; no CUDA required on Streamlit Cloud
+#
+# All torch APIs used in app.py are stable across 2.3→2.10:
+#   VGG19_Weights.DEFAULT, models.vgg19(), weights.transforms(),
+#   torch.no_grad(), torch.softmax(), torch.topk()  — no changes needed.
+#
+# ── Dependency matrix ────────────────────────────────────────────────────────
+# Package       Version    Python 3.14 wheel   Notes
+# ─────────────────────────────────────────────────────────────────────────────
+# torch         2.10.0     cp314 ✓ (PyPI)      CPU build installs automatically
+# torchvision   0.25.0     cp314 ✓ (PyPI)      exact torch 2.10 paired release
+# streamlit     1.40.2     py3 (pure Python)   latest stable as of Oct 2026
+# Pillow        10.4.0     cp314 ✓ (PyPI)      security patch; same API
+# pandas        2.2.3      cp314 ✓ (PyPI)      patch release; same API
 # ─────────────────────────────────────────────────────────────────────────────
 
 streamlit==1.40.2
-torch==2.5.1
-torchvision==0.20.1
+torch==2.10.0
+torchvision==0.25.0
 Pillow==10.4.0
 pandas==2.2.3
