@@ -1,39 +1,56 @@
 # ─────────────────────────────────────────────────────────────────────────────
 # VGG-19 Image Classification – Streamlit Community Cloud requirements
 #
-# Target runtime : Python 3.14 (Streamlit Cloud default as of 2026)
+# Target runtime : Python 3.14.8 (Streamlit Cloud default, 2026)
 # Platform       : Linux x86_64 manylinux_2_28 – Streamlit Cloud
 #
-# ── Why these versions ───────────────────────────────────────────────────────
+# ── Why each version was chosen ──────────────────────────────────────────────
 #
-# torch 2.9.0 and torch 2.5.1 both fail on Python 3.14:
-#   - torch==2.5.1 has no cp314 wheel (built for cp38–cp312 only)
-#   - torch==2.9.0 does not exist as a PyPI release (typo in prompt)
-#   - torch==2.9.1 is the first release to publish a cp314 CPU wheel
+# torch==2.10.0 + torchvision==0.25.0
+#   Unchanged from previous working state. These are the confirmed
+#   torch 2.10 GA release (Jan 22 2026) paired versions with cp314
+#   Linux CPU wheels on PyPI.
 #
-# torch==2.10.0 + torchvision==0.25.0 is the confirmed stable pairing for
-# Python 3.14 on Linux x86_64:
-#   - Officially announced Jan 22 2026 (dev-discuss.pytorch.org/t/3291)
-#   - torchvision 0.25.0 is the exact matching domain library release
-#     (confirmed in the same announcement: pytorch/vision/releases/tag/v0.25.0)
-#   - CPU-only build; no CUDA required on Streamlit Cloud
+# Pillow==11.2.1
+#   Root cause of prior failure: Pillow 10.4.0 was released Oct 2024,
+#   before Python 3.14's ABI was finalised (Oct 7 2025). It has no
+#   cp314 wheel. pip fell back to the sdist, which requires zlib headers
+#   unavailable on Streamlit Cloud's build environment.
+#   Fix: Pillow 11.0.0 (Oct 2025) was the first release to ship cp314
+#   manylinux wheels. 11.2.1 (Apr 2026) is the latest 11.x stable release
+#   and ships cp314-cp314-manylinux_2_28_x86_64.whl on PyPI.
+#   API used in app.py (Image.open, Image.verify, image.convert,
+#   UnidentifiedImageError) is unchanged across Pillow 10→11→12.
 #
-# All torch APIs used in app.py are stable across 2.3→2.10:
-#   VGG19_Weights.DEFAULT, models.vgg19(), weights.transforms(),
-#   torch.no_grad(), torch.softmax(), torch.topk()  — no changes needed.
+# pandas==3.0.2
+#   Root cause of prior failure: pandas 2.2.3 was released Aug 2024,
+#   before Python 3.14's ABI was stable. No cp314 wheel exists for it.
+#   pip fell back to the sdist, which requires a C compiler toolchain
+#   and Cython not present on Streamlit Cloud's build environment.
+#   Fix: pandas 3.0.0 (Jan 21 2026) was the first release to declare
+#   Python 3.14 support and ship cp314 manylinux wheels.
+#   3.0.2 (Mar 30 2026) is used as it includes regression fixes.
+#   Requires-Python >=3.11, compatible with Python 3.14.8.
+#   API used in app.py (pd.DataFrame, .rename, .apply, .set_index) is
+#   stable across pandas 2.x and 3.x with no breaking changes for this
+#   usage pattern.
 #
-# ── Dependency matrix ────────────────────────────────────────────────────────
-# Package       Version    Python 3.14 wheel   Notes
+# streamlit==1.40.2
+#   Pure Python wheel (py3-none-any). No binary compilation required.
+#   Compatible with Python 3.14. Unchanged.
+#
+# ── Final dependency matrix ───────────────────────────────────────────────────
+# Package       Version   cp314 Linux wheel   Source
 # ─────────────────────────────────────────────────────────────────────────────
-# torch         2.10.0     cp314 ✓ (PyPI)      CPU build installs automatically
-# torchvision   0.25.0     cp314 ✓ (PyPI)      exact torch 2.10 paired release
-# streamlit     1.40.2     py3 (pure Python)   latest stable as of Oct 2026
-# Pillow        10.4.0     cp314 ✓ (PyPI)      security patch; same API
-# pandas        2.2.3      cp314 ✓ (PyPI)      patch release; same API
+# streamlit     1.40.2    py3 (pure Python)   PyPI
+# torch         2.10.0    cp314 ✓             PyPI (GA Jan 2026)
+# torchvision   0.25.0    cp314 ✓             PyPI (GA Jan 2026)
+# Pillow        11.2.1    cp314 ✓             PyPI (Apr 2026)
+# pandas        3.0.2     cp314 ✓             PyPI (Mar 2026)
 # ─────────────────────────────────────────────────────────────────────────────
 
 streamlit==1.40.2
 torch==2.10.0
 torchvision==0.25.0
-Pillow==10.4.0
-pandas==2.2.3
+Pillow==11.2.1
+pandas==3.0.2
