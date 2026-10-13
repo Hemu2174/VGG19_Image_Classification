@@ -281,17 +281,3 @@ Softmax converts a vector of classification logits into normalized probability v
 
 The pretrained model weights may be downloaded and cached locally. Once the weights are available, later runs can reuse the cached model.
 
-## 📚 References
-
-- [PyTorch Documentation](https://pytorch.org/docs/stable/index.html)
-- [Torchvision VGG-19 Documentation](https://pytorch.org/vision/stable/models/generated/torchvision.models.vgg19.html)
-- [Streamlit Documentation](https://docs.streamlit.io/)
-- [Pillow Documentation](https://pillow.readthedocs.io/)
-
-## 👨‍💻 Author
-
-Developed as an academic project to demonstrate deep learning-based image classification using a pretrained VGG-19 model and Streamlit.
-
----
-
-⭐ If you find this project useful for learning computer vision and deep learning, consider starring the repository.
