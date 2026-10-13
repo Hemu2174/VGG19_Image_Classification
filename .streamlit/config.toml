@@ -1,0 +1,16 @@
+# Streamlit configuration for VGG-19 Image Classification
+# This file IS read by Streamlit Community Cloud.
+#
+# NOTE: Python version cannot be set here.
+# You must select Python 3.11 in the Cloud dashboard:
+#   App menu → Settings → Advanced → Python version → 3.11
+
+[server]
+# Prevents the app from opening a browser tab on the server side
+headless = true
+# Raise the upload limit to accommodate large images
+maxUploadSize = 50
+
+[browser]
+# Suppress the "Are you sure you want to leave?" browser dialog
+gatherUsageStats = false

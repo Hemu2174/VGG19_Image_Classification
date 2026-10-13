@@ -42,6 +42,8 @@ Thumbs.db
 desktop.ini
 
 # ── Streamlit ────────────────────────────────────────────────────────────────
+# Track config.toml (needed for Cloud deployment settings)
+# Only exclude secrets so credentials are never committed
 .streamlit/secrets.toml
 
 # ── Logs ─────────────────────────────────────────────────────────────────────

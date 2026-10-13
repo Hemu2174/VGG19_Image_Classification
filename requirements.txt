@@ -1,5 +1,25 @@
-streamlit==1.35.0
-torch==2.3.1
-torchvision==0.18.1
-Pillow==10.3.0
-pandas==2.2.2
+# ─────────────────────────────────────────────────────────────────────────────
+# VGG-19 Image Classification – Streamlit Community Cloud requirements
+#
+# Target runtime : Python 3.11
+# Platform       : Linux x86_64 (Debian 11 "bullseye") – Streamlit Cloud
+# Python selector: Set to 3.11 in the Cloud dashboard → Advanced Settings
+#                  (runtime.txt is NOT respected by Streamlit Community Cloud)
+#
+# Dependency matrix
+# ──────────────────────────────────────────────────────────────
+# Package       | Version  | Notes
+# ──────────────────────────────────────────────────────────────
+# torch         | 2.5.1    | cp311-manylinux_2_17_x86_64 wheel
+#               |          | available on PyPI; CPU-only (no CUDA)
+# torchvision   | 0.20.1   | matches torch 2.5.x series exactly
+# streamlit     | 1.40.2   | latest stable; fully compatible w/ Py 3.11
+# Pillow        | 10.4.0   | security patch over 10.3.0; same API
+# pandas        | 2.2.3    | patch release over 2.2.2; same API
+# ─────────────────────────────────────────────────────────────────────────────
+
+streamlit==1.40.2
+torch==2.5.1
+torchvision==0.20.1
+Pillow==10.4.0
+pandas==2.2.3
