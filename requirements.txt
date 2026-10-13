@@ -1,46 +1,52 @@
 # ─────────────────────────────────────────────────────────────────────────────
 # VGG-19 Image Classification – Streamlit Community Cloud requirements
 #
-# Target runtime : Python 3.14.8 (Streamlit Cloud default, 2026)
-# Platform       : Linux x86_64 manylinux_2_28 – Streamlit Cloud
+# Target runtime : Python 3.11.17 (Streamlit Cloud default, confirmed from logs)
+# Platform       : Linux x86_64 manylinux – Streamlit Cloud
 #
 # ── Why each version was chosen ──────────────────────────────────────────────
 #
-# torch==2.10.0 + torchvision==0.25.0
-#   Confirmed torch 2.10 GA release (Jan 22 2026) paired versions.
-#   cp314 Linux CPU wheels exist on PyPI.
-#
-# Pillow==12.3.0
-#   Pillow 11.2.1 has NO cp314 wheels — it predates Python 3.14 support.
-#   Verified from PyPI JSON: pillow-12.3.0 ships:
-#     pillow-12.3.0-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl
-#   Pillow 12.3.0 (Jul 1 2026) is the first 12.x stable release with cp314
-#   manylinux wheels. API used in app.py (Image.open, Image.verify,
-#   image.convert, UnidentifiedImageError) is unchanged across Pillow 11→12.
-#
-# pandas==3.0.2
-#   Verified from PyPI JSON: pandas-3.0.2 ships:
-#     pandas-3.0.2-cp314-cp314-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl
-#   Released Mar 31 2026 with full Python 3.14 support.
-#   API used in app.py (pd.DataFrame, .rename, .apply, .set_index) is
-#   stable across pandas 2.x and 3.x with no breaking changes for this usage.
-#
 # streamlit==1.40.2
-#   Pure Python wheel (py3-none-any). No binary compilation required.
-#   Compatible with Python 3.14. Unchanged.
+#   Unchanged. Pure Python wheel (py2.py3-none-any). No binary build required.
+#   Verified from PyPI JSON requires_dist:
+#     "pillow<12,>=7.1.0"   — Pillow must be <12
+#     "pandas<3,>=1.4.0"    — pandas must be <3
+#   These constraints drive the Pillow and pandas versions below.
+#
+# torch==2.10.0 + torchvision==0.25.0
+#   Unchanged. Confirmed cp311 Linux CPU wheels exist on PyPI.
+#
+# Pillow==11.3.0
+#   Previous attempt (11.2.1) had no cp314 wheels; irrelevant here since
+#   Streamlit Cloud is now confirmed to be Python 3.11.17, not 3.14.
+#   Root constraint: streamlit==1.40.2 requires Pillow<12 (verified from
+#   PyPI JSON requires_dist). Pillow 12.x violates this and caused the
+#   reported conflict.
+#   Fix: Pillow 11.3.0 (Jul 1 2025) is within the <12 bound.
+#   Verified from PyPI JSON: ships cp311-cp311-manylinux_2_27_x86_64.whl ✓
+#   API used in app.py (Image.open, Image.verify, image.convert,
+#   UnidentifiedImageError) is unchanged across Pillow 10→11.
+#
+# pandas==2.2.3
+#   Root constraint: streamlit==1.40.2 requires pandas<3 (verified from
+#   PyPI JSON requires_dist). pandas 3.x violates this and caused the
+#   reported conflict.
+#   Fix: pandas 2.2.3 is within the <3 bound and has cp311 manylinux wheels.
+#   API used in app.py (pd.DataFrame, .rename, .apply, .set_index) is
+#   stable across 2.x.
 #
 # ── Final dependency matrix ───────────────────────────────────────────────────
-# Package       Version   cp314 Linux wheel   Source / verified
+# Package       Version   Python   Linux wheel             Source / verified
 # ─────────────────────────────────────────────────────────────────────────────
-# streamlit     1.40.2    py3 (pure Python)   PyPI
-# torch         2.10.0    cp314 ✓             PyPI (GA Jan 2026)
-# torchvision   0.25.0    cp314 ✓             PyPI (GA Jan 2026)
-# Pillow        12.3.0    cp314 ✓             PyPI JSON verified (Jul 2026)
-# pandas        3.0.2     cp314 ✓             PyPI JSON verified (Mar 2026)
+# streamlit     1.40.2    any      pure Python             PyPI (Nov 2024)
+# torch         2.10.0    cp311    cp311 manylinux ✓       PyPI (Jan 2026)
+# torchvision   0.25.0    cp311    cp311 manylinux ✓       PyPI (Jan 2026)
+# Pillow        11.3.0    cp311    cp311 manylinux ✓       PyPI JSON verified
+# pandas        2.2.3     cp311    cp311 manylinux ✓       PyPI (Aug 2024)
 # ─────────────────────────────────────────────────────────────────────────────
 
 streamlit==1.40.2
 torch==2.10.0
 torchvision==0.25.0
-Pillow==12.3.0
-pandas==3.0.2
+Pillow==11.3.0
+pandas==2.2.3
