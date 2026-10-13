@@ -1,344 +1,297 @@
-# 🔬 Image Classification Using VGG-19 Model with Streamlit
+# 🖼️ Image Classification Using VGG-19 and Streamlit
 
-A complete academic project that demonstrates **deep learning-based image classification**
-using the **VGG-19** convolutional neural network pretrained on ImageNet (1 000 classes),
-packaged as an interactive **Streamlit** web application.
+A deep learning-based image classification web application built using **VGG-19, PyTorch, and Streamlit**. The application uses a pretrained VGG-19 convolutional neural network to identify objects in uploaded images and display the top-5 predicted categories with their confidence scores.
 
----
+## 📌 Project Overview
 
-## 📋 Table of Contents
+Image classification is a computer vision task that identifies the objects or categories present in an image. This project demonstrates how a pretrained deep learning model can be integrated into an interactive web application.
 
-1. [Project Overview](#project-overview)
-2. [Features](#features)
-3. [Technology Stack](#technology-stack)
-4. [Project Structure](#project-structure)
-5. [Installation & Setup (Windows)](#installation--setup-windows)
-6. [Running the Application](#running-the-application)
-7. [Application Workflow](#application-workflow)
-8. [Model Architecture – VGG-19](#model-architecture--vgg-19)
-9. [Preprocessing Pipeline](#preprocessing-pipeline)
-10. [Limitations](#limitations)
-11. [Future Enhancements](#future-enhancements)
-12. [Viva Questions & Answers](#viva-questions--answers)
-13. [References](#references)
+Users can upload an image in JPG, JPEG, or PNG format. The application preprocesses the image, passes it through the pretrained VGG-19 model, and displays the five most likely ImageNet categories.
 
----
+**Project type:** Academic Mini Project  
+**Domain:** Artificial Intelligence, Deep Learning, Computer Vision  
+**Model:** VGG-19  
+**Interface:** Streamlit
 
-## Project Overview
+## ✨ Features
 
-This project showcases how a state-of-the-art pretrained CNN (VGG-19) can be integrated into
-a beginner-friendly web interface. Users upload any image and the app returns the top-5
-predicted object categories with confidence scores, a sortable table, and a bar chart —
-all without requiring custom model training.
+- 🖼️ Upload images in JPG, JPEG, and PNG formats.
+- 🧠 Classify images using pretrained VGG-19 weights.
+- 🏷️ Display the top-1 predicted category.
+- 📊 Show confidence scores for the top-5 predictions.
+- 📋 Present predictions in a readable table.
+- 📈 Visualize prediction confidence using a bar chart.
+- 🔍 Display image metadata, including dimensions, color mode, and file size.
+- ⚡ Cache the model to avoid unnecessary reloads during app interactions.
+- 🎨 Provide an interactive interface with a sidebar and custom styling.
+- 🛡️ Validate uploaded images before processing.
 
-> **Note:** This application uses the **officially pretrained ImageNet weights** provided
-> by `torchvision`. No custom training was performed.
+## 🛠️ Technology Stack
 
----
+| Technology | Purpose |
+|---|---|
+| Python | Main programming language |
+| PyTorch | Deep learning framework and inference |
+| Torchvision | VGG-19 model and image transformations |
+| Streamlit | Interactive web application |
+| Pillow (PIL) | Image loading and processing |
+| Pandas | Prediction tables and result handling |
+| Matplotlib / Streamlit charts | Prediction visualization, as implemented |
 
-## Features
+## 🧠 Model Architecture: VGG-19
 
-| Feature | Details |
-|---------|---------|
-| Image upload | JPG, JPEG, PNG support |
-| Real-time inference | VGG-19 forward pass on CPU |
-| Top-1 prediction | Displayed as a highlighted badge |
-| Top-5 predictions | Interactive table + bar chart |
-| Image metadata | Dimensions, colour mode, file size |
-| Model caching | `st.cache_resource` — loads once |
-| Error handling | Invalid files & runtime errors caught |
-| Responsive UI | Two-column layout, custom CSS |
-| Sidebar | Project info, model details, workflow |
+VGG-19 is a convolutional neural network introduced by the Visual Geometry Group at the University of Oxford. It is commonly used for image recognition and classification.
 
----
+The pretrained VGG-19 model used in this project was trained on ImageNet, which contains 1,000 classification categories.
 
-## Technology Stack
+### Architecture overview
 
-| Library | Version | Purpose |
-|---------|---------|---------|
-| Python | ≥ 3.10 | Runtime |
-| Streamlit | 1.35.0 | Web UI framework |
-| PyTorch | 2.3.1 | Deep learning inference |
-| Torchvision | 0.18.1 | Pretrained VGG-19 & transforms |
-| Pillow | 10.3.0 | Image loading & validation |
-| Pandas | 2.2.2 | Results table |
+1. **Input layer:** Accepts an RGB image resized to 224 × 224 pixels.
+2. **Convolutional layers:** Extract visual features such as edges, textures, patterns, and shapes.
+3. **ReLU activation:** Introduces non-linearity.
+4. **Max-pooling layers:** Reduce spatial dimensions while retaining important features.
+5. **Fully connected layers:** Use the extracted features to produce classification scores.
+6. **Output layer:** Produces scores for 1,000 ImageNet categories.
 
----
+### Why VGG-19?
 
-## Project Structure
+- It is a well-established CNN architecture.
+- Pretrained weights allow classification without training a model from scratch.
+- Its architecture is useful for learning convolutional neural networks.
+- It provides a practical introduction to transfer learning and model inference.
 
+**Note:** This project uses pretrained ImageNet weights. It does not train VGG-19 on a custom dataset.
+
+## 🔄 Application Workflow
+
+```mermaid
+flowchart TD
+    A[Start Streamlit Application] --> B[Load Pretrained VGG-19]
+    B --> C[Upload Image]
+    C --> D[Validate Image]
+    D --> E[Convert to RGB]
+    E --> F[Resize to 224 x 224]
+    F --> G[Normalize Image Tensor]
+    G --> H[Run VGG-19 Inference]
+    H --> I[Calculate Prediction Probabilities]
+    I --> J[Select Top-5 Categories]
+    J --> K[Display Image and Confidence Scores]
+    K --> L[Show Prediction Table and Chart]
 ```
+
+## 🧩 Image Preprocessing
+
+The uploaded image must be converted into the format expected by the pretrained model.
+
+The preprocessing pipeline consists of the following steps:
+
+1. Load the uploaded image using Pillow.
+2. Convert the image to RGB format.
+3. Resize it to 224 × 224 pixels.
+4. Convert the image into a PyTorch tensor.
+5. Normalize the tensor using the ImageNet mean and standard deviation.
+6. Pass the processed tensor to VGG-19 for inference.
+
+Preprocessing is important because the pretrained model expects images in a particular format and numerical range.
+
+## 📂 Project Structure
+
+```text
 VGG19_Image_Classification/
-├── app.py            ← Main Streamlit application
-├── requirements.txt  ← Python dependencies (pinned versions)
-├── README.md         ← This file
-└── .gitignore        ← Git ignore rules
+│
+├── app.py              # Streamlit application and prediction logic
+├── requirements.txt    # Python dependencies
+├── README.md           # Project documentation
+├── .gitignore          # Files excluded from Git
+│
+└── venv/               # Local virtual environment (not committed)
 ```
 
----
+The VGG-19 model weights are downloaded and cached by Torchvision when required. They do not need to be included in the GitHub repository.
 
-## Installation & Setup (Windows)
+## ⚙️ Installation and Setup
 
 ### Prerequisites
 
-- Python 3.10 or newer  
-- `pip` (bundled with Python)  
-- Internet connection (first run downloads the VGG-19 weights, ~548 MB)
+- Python 3.10 or 3.11 recommended for the pinned PyTorch dependencies.
+- Git installed on your system.
+- Internet access for installing dependencies and downloading model weights on the first run.
+- Visual Studio Code or another Python editor.
 
-### Step-by-step (Windows CMD)
+### Step 1: Clone the repository
 
-```cmd
-:: 1. Navigate to the project folder
-cd "d:\Web Projects\LangChain Projects\VGG19_Image_Classification"
-
-:: 2. Create a virtual environment
-python -m venv venv
-
-:: 3. Activate the virtual environment
-venv\Scripts\activate
-
-:: 4. Upgrade pip
-python -m pip install --upgrade pip
-
-:: 5. Install all dependencies
-pip install -r requirements.txt
+```bash
+git clone https://github.com/Hemu2174/VGG19_Image_Classification.git
+cd VGG19_Image_Classification
 ```
 
-### Step-by-step (Windows PowerShell)
+### Step 2: Create a virtual environment
+
+**Windows PowerShell:**
 
 ```powershell
-# 1. Navigate to the project folder
-Set-Location "d:\Web Projects\LangChain Projects\VGG19_Image_Classification"
-
-# 2. Create a virtual environment
 python -m venv venv
-
-# 3. Activate the virtual environment
-.\venv\Scripts\Activate.ps1
-
-# 4. Upgrade pip
-python -m pip install --upgrade pip
-
-# 5. Install all dependencies
-pip install -r requirements.txt
 ```
 
-> **Tip for PowerShell users:** if you see an execution-policy error, run
-> `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` once.
+### Step 3: Activate the virtual environment
 
----
+```powershell
+.\venv\Scripts\Activate.ps1
+```
 
-## Running the Application
+If PowerShell blocks script execution, you can use Command Prompt instead:
 
 ```cmd
-:: Make sure the virtual environment is active, then:
-streamlit run app.py
+venv\Scripts\activate.bat
 ```
 
-Streamlit will print a local URL (usually `http://localhost:8501`).
-Open it in any modern browser.
+### Step 4: Upgrade pip
 
-**First-run note:** PyTorch will automatically download the VGG-19 pretrained weights
-(~548 MB) on the very first launch and cache them locally. Subsequent starts are fast.
-
----
-
-## Application Workflow
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    USER UPLOADS IMAGE                        │
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│  Pillow validates & opens the image (RGB conversion)        │
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│  VGG19_Weights.DEFAULT.transforms() preprocessing:          │
-│  • Resize shortest edge → 256 px                            │
-│  • Centre-crop → 224 × 224 px                               │
-│  • ToTensor  (pixel values 0–1)                             │
-│  • Normalise with ImageNet mean & std                        │
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│  VGG-19 forward pass  (16 Conv + 3 FC layers)               │
-│  Output: logit tensor of shape (1, 1000)                    │
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│  Softmax → probability distribution over 1 000 classes      │
-│  torch.topk(probs, 5) → top-5 (label, confidence) pairs     │
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│  Streamlit renders:                                          │
-│  • Uploaded image + metadata                                 │
-│  • Top-1 badge with confidence %                             │
-│  • Top-5 table (Pandas DataFrame)                            │
-│  • Bar chart (st.bar_chart)                                  │
-└─────────────────────────────────────────────────────────────┘
+```bash
+python -m pip install --upgrade pip
 ```
 
----
+### Step 5: Install dependencies
 
-## Model Architecture – VGG-19
-
-VGG-19 was proposed by **Simonyan & Zisserman (2014)** from the Visual Geometry Group,
-University of Oxford. It won 2nd place in the ILSVRC 2014 classification challenge.
-
-```
-INPUT  224×224×3
-  │
-  ├── Block 1:  Conv3-64  × 2  →  MaxPool  →  112×112×64
-  ├── Block 2:  Conv3-128 × 2  →  MaxPool  →   56×56×128
-  ├── Block 3:  Conv3-256 × 4  →  MaxPool  →   28×28×256
-  ├── Block 4:  Conv3-512 × 4  →  MaxPool  →   14×14×512
-  ├── Block 5:  Conv3-512 × 4  →  MaxPool  →    7×7×512
-  │
-  ├── Flatten  →  25 088
-  ├── FC-4096  +  ReLU  +  Dropout
-  ├── FC-4096  +  ReLU  +  Dropout
-  └── FC-1000  →  Softmax  →  OUTPUT (1 000 class probabilities)
-
-Total trainable parameters: ~143.7 million
+```bash
+python -m pip install -r requirements.txt
 ```
 
+If dependency installation fails, verify that your Python version is compatible with the versions specified in `requirements.txt`.
+
+### Step 6: Run the application
+
+```bash
+python -m streamlit run app.py
+```
+
+Streamlit will display a local URL, usually:
+
+```text
+http://localhost:8501
+```
+
+Open this URL in your browser to use the application.
+
+## 🚀 How to Use the Application
+
+1. Start the application using Streamlit.
+2. Open the local URL in a browser.
+3. Select an image using the file uploader.
+4. Wait for the image to be processed by VGG-19.
+5. View the uploaded image and the top predicted category.
+6. Review the confidence scores of the top-5 predictions.
+7. Examine the prediction table and confidence chart.
+
+The first run may take longer because Torchvision needs to download the pretrained model weights. Subsequent runs can reuse the locally cached weights.
+
+## 📊 Understanding the Results
+
+The application displays the predicted ImageNet categories and their associated confidence scores.
+
+- **Top-1 prediction:** The category with the highest predicted probability.
+- **Top-5 predictions:** The five categories with the highest predicted probabilities.
+- **Confidence score:** The model's estimated probability for a particular category.
+
+For example, an image of a fruit might produce a fruit-related category among the top predictions.
+
+The exact categories and scores depend on the uploaded image.
+
+**Important:** A confidence score is not a guarantee that a prediction is correct. Model predictions can be affected by image quality, lighting, object visibility, and similarity between categories.
+
+## ⚠️ Limitations
+
+- The model recognizes categories from its pretrained ImageNet label set.
+- It cannot reliably identify arbitrary custom categories that are not represented in its training classes.
+- The project does not include custom model training or fine-tuning.
+- Prediction results depend on image quality and preprocessing.
+- Inference on a CPU may be slower than on a compatible GPU.
+- The application provides model predictions, not guaranteed ground-truth labels.
+
+## 🔮 Future Enhancements
+
+- Add a custom dataset and train or fine-tune the model.
+- Compare VGG-19 with ResNet, MobileNet, and EfficientNet.
+- Add Grad-CAM visualizations to highlight image regions influencing predictions.
+- Support batch image classification.
+- Export prediction results as CSV.
+- Add additional model evaluation metrics using a labeled test dataset.
+- Deploy the application to a public hosting platform.
+- Improve inference performance and add optional GPU support.
+
+## 🎓 Viva Questions and Answers
+
+### 1. What is image classification?
+
+Image classification is a computer vision task that assigns a category or label to an image based on its visual content.
+
+### 2. What is VGG-19?
+
+VGG-19 is a convolutional neural network architecture developed by the Visual Geometry Group at the University of Oxford. Its name refers to the 19 weight-bearing layers.
+
+### 3. What is a CNN?
+
+A Convolutional Neural Network (CNN) is a deep learning model designed to learn spatial features from images using convolutional filters and related operations.
+
+### 4. Why is VGG-19 used in this project?
+
+VGG-19 provides a pretrained image classification model that can recognize ImageNet categories without requiring the project to train a network from scratch.
+
+### 5. What is transfer learning?
+
+Transfer learning reuses knowledge learned by a model on one task or dataset for another task. Using pretrained weights is a common transfer learning approach.
+
+### 6. What is ImageNet?
+
+ImageNet is a large image dataset commonly used to train and evaluate image recognition models. The standard pretrained VGG-19 classifier predicts among 1,000 ImageNet categories.
+
+### 7. Why is an image resized to 224 × 224?
+
+The standard pretrained VGG-19 image classification pipeline expects a 224 × 224 input image, so resizing provides a consistent input size.
+
+### 8. Why convert an image to RGB?
+
+The model expects three color channels. Converting to RGB ensures a consistent color representation for images that may otherwise be grayscale or use another color mode.
+
+### 9. What is normalization?
+
+Normalization adjusts pixel values using predefined statistics, such as the ImageNet channel means and standard deviations, to match the preprocessing expected by the pretrained model.
+
+### 10. What is Streamlit?
+
+Streamlit is a Python framework for building interactive web applications, particularly for data science and machine learning projects.
+
+### 11. What is PyTorch?
+
+PyTorch is a deep learning framework used to create, train, and run neural networks. In this project, it performs model inference.
+
+### 12. What is the top-5 prediction?
+
+The top-5 prediction shows the five categories with the highest model output probabilities for an input image.
+
+### 13. Does this project train the VGG-19 model?
+
+No. The project uses pretrained ImageNet weights for inference and does not train the model on a custom dataset.
+
+### 14. What is the purpose of softmax?
+
+Softmax converts a vector of classification logits into normalized probability values. In this project, these values can be used to rank ImageNet categories.
+
+### 15. What happens during the first run?
+
+The pretrained model weights may be downloaded and cached locally. Once the weights are available, later runs can reuse the cached model.
+
+## 📚 References
+
+- [PyTorch Documentation](https://pytorch.org/docs/stable/index.html)
+- [Torchvision VGG-19 Documentation](https://pytorch.org/vision/stable/models/generated/torchvision.models.vgg19.html)
+- [Streamlit Documentation](https://docs.streamlit.io/)
+- [Pillow Documentation](https://pillow.readthedocs.io/)
+
+## 👨‍💻 Author
+
+Developed as an academic project to demonstrate deep learning-based image classification using a pretrained VGG-19 model and Streamlit.
+
 ---
 
-## Preprocessing Pipeline
-
-Torchvision's `VGG19_Weights.DEFAULT.transforms()` applies the **exact same pipeline**
-used during the model's original ImageNet training:
-
-| Step | Operation | Value |
-|------|-----------|-------|
-| 1 | Resize | Shorter edge → 256 px |
-| 2 | CentreCrop | 224 × 224 px |
-| 3 | ToTensor | Pixel range 0–1 |
-| 4 | Normalise mean | [0.485, 0.456, 0.406] |
-| 5 | Normalise std | [0.229, 0.224, 0.225] |
-
-Using the wrong normalisation values is a common bug; `VGG19_Weights.DEFAULT.transforms()`
-guarantees correctness automatically.
-
----
-
-## Limitations
-
-- **Fixed vocabulary:** Only recognises 1 000 ImageNet categories; unknown objects will
-  be mis-classified as the closest known category.  
-- **Resolution sensitivity:** Very small or very large input images are forcibly resized,
-  potentially losing detail.  
-- **CPU speed:** VGG-19 is large (~550 MB); each inference on CPU takes 1–5 seconds.  
-- **No explainability:** The app does not show *why* a prediction was made (no Grad-CAM).  
-- **No domain adaptation:** Not suitable for medical imaging, satellite imagery, or other
-  specialised domains without fine-tuning.
-
----
-
-## Future Enhancements
-
-- **Grad-CAM heatmaps** – visualise which image regions drove the prediction  
-- **Model comparison** – benchmark VGG-19 vs. ResNet-50 vs. EfficientNet-B0  
-- **GPU acceleration** – detect CUDA and move tensors to GPU automatically  
-- **Fine-tuning panel** – allow uploading a small custom dataset and fine-tuning the FC layers  
-- **Batch upload** – classify multiple images at once  
-- **Confidence threshold** – reject predictions below a user-defined confidence  
-- **Streamlit Cloud deployment** – one-click public sharing  
-
----
-
-## Viva Questions & Answers
-
-### Q1. What is VGG-19 and why was it chosen for this project?
-**A:** VGG-19 is a deep convolutional neural network with 19 weight layers (16 convolutional
-+ 3 fully connected) developed by the Visual Geometry Group at Oxford University in 2014.
-It was chosen because it uses a simple, uniform architecture (only 3×3 convolutions), has
-excellent pretrained ImageNet weights available in Torchvision, and is widely studied in
-academic literature, making it ideal for demonstrating CNN-based image classification.
-
-### Q2. What is ImageNet and how many classes does VGG-19 recognise?
-**A:** ImageNet is a large-scale visual database with over 14 million labelled images.
-The subset used for the ILSVRC challenge (ImageNet Large Scale Visual Recognition Challenge)
-contains 1.2 million training images across **1 000 categories**. VGG-19 trained on this
-dataset can recognise 1 000 different object categories.
-
-### Q3. Why do we apply normalisation before passing the image to the model?
-**A:** Neural networks converge faster and perform better when input features have a similar
-scale. The normalisation values (mean `[0.485, 0.456, 0.406]`, std `[0.229, 0.224, 0.225]`)
-were computed from the entire ImageNet training set. Applying the **same** normalisation at
-inference time ensures the input distribution matches what the model saw during training.
-
-### Q4. What does `VGG19_Weights.DEFAULT` mean in Torchvision?
-**A:** `VGG19_Weights.DEFAULT` is an enum that points to the best available pretrained
-weights for VGG-19 in Torchvision — currently `VGG19_Weights.IMAGENET1K_V1`. It also
-exposes the associated `transforms()` method, which returns the exact preprocessing pipeline
-used during training. Using `.DEFAULT` is the recommended modern API (deprecated `pretrained=True`
-parameter is avoided).
-
-### Q5. What is Softmax and why is it used in the output layer?
-**A:** Softmax converts a vector of raw logits (unbounded real numbers) into a **probability
-distribution** — all values are in [0, 1] and sum to 1. This makes the model's output
-directly interpretable as class confidence scores. The class with the highest probability is
-the predicted label.
-
-### Q6. What is `st.cache_resource` and why is it used?
-**A:** `st.cache_resource` is a Streamlit decorator that caches objects shared across all
-users and sessions — perfect for ML models. Without it, the VGG-19 model (~548 MB) would be
-reloaded from disk on every user interaction, making the app extremely slow. With caching,
-the model is loaded once and reused for all subsequent inference calls.
-
-### Q7. How does the app handle corrupt or non-image files?
-**A:** The app calls `Image.verify()` from Pillow, which reads the file header and raises an
-`UnidentifiedImageError` or a generic exception if the file is truncated or not a valid image.
-Streamlit then catches these exceptions and displays a user-friendly error message instead of
-crashing.
-
-### Q8. What is the difference between a Convolutional layer and a Fully Connected layer?
-**A:** A **convolutional layer** applies learnable filters (kernels) that slide over the
-spatial dimensions of the input, preserving spatial structure and sharing weights across
-positions — making it translation-invariant and parameter-efficient. A **fully connected
-(FC) layer** connects every input neuron to every output neuron, treating the input as a
-flat vector. In VGG-19, convolutional layers extract spatial features, while FC layers
-perform final classification.
-
-### Q9. Why does VGG-19 use 3×3 convolutions exclusively?
-**A:** Simonyan & Zisserman showed that stacking two 3×3 conv layers gives the same
-**receptive field** as one 5×5 layer, but with **fewer parameters** (2 × 3² = 18 vs. 25
-weights per channel) and an extra non-linearity (ReLU), allowing the network to learn
-more complex features. Using only small 3×3 kernels also makes the architecture uniform
-and easy to analyse.
-
-### Q10. Can this application classify images outside the 1 000 ImageNet categories?
-**A:** No — VGG-19 can only output one of the 1 000 categories it was trained on. If an
-image does not belong to any of those categories, the model will still force-assign the
-closest class (possibly with a low confidence score). To handle new categories, the model
-would need to be **fine-tuned** on a custom dataset with the new classes.
-
----
-
-## References
-
-1. Simonyan, K., & Zisserman, A. (2014). *Very Deep Convolutional Networks for Large-Scale
-   Image Recognition.* arXiv:1409.1556. <https://arxiv.org/abs/1409.1556>  
-2. PyTorch Documentation – `torchvision.models.vgg19`:
-   <https://pytorch.org/vision/stable/models/vgg.html>  
-3. Streamlit Documentation: <https://docs.streamlit.io>  
-4. Deng, J. et al. (2009). *ImageNet: A Large-Scale Hierarchical Image Database.*
-   IEEE CVPR 2009.  
-5. ImageNet Simple Labels (class names used in this project):
-   <https://github.com/anishathalye/imagenet-simple-labels>  
-
----
-
-*This project was built for academic demonstration purposes using publicly available
-pretrained weights. No custom model training was performed.*
-#   V G G 1 9 _ I m a g e _ C l a s s i f i c a t i o n  
- 
+⭐ If you find this project useful for learning computer vision and deep learning, consider starring the repository.
